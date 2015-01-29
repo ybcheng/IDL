@@ -40,43 +40,16 @@ if (interleave NE 0) then begin       ;input file needs to be in BSQ format
   return
 endif
 
-if (data_type eq 4) then begin        ;input data type is floating point
-  print, 'input data type is floating point'
-  rfl = fltarr (nsamples, nlines, nbands)
-  openr, lun, infile, /get_lun
-  readu, lun, rfl
-  close, lun
-endif else begin
-  if (data_type eq 1) then begin      ;input data type is byte
-    print, 'input data type is byte'
-    rfl = bytarr (nsamples, nlines, nbands)
-    openr, lun, infile, /get_lun
-    readu, lun, rfl
-    close, lun
-    rfl = float(rfl)
-  endif else begin
-    if (data_type eq 12) then begin   ;input data type is unsigned integer
-      print, 'input data type is unsigned integer'
-      rfl = uintarr (nsamples, nlines, nbands)
-      openr, lun, infile, /get_lun
-      readu, lun, rfl
-      close, lun
-      rfl = float(rfl)
-    endif else begin
-      if (data_type eq 2) then begin   ;input data type is integer
-        print, 'input data type is integer'
-        rfl = intarr (nsamples, nlines, nbands)
-        openr, lun, infile, /get_lun
-        readu, lun, rfl
-        close, lun
-        rfl = float(rfl)
-      endif else begin
-        print, 'check input file data type'
-      endelse
-    endelse    
-  endelse
-endelse
-  
+if (data_type eq 4) then rfl = fltarr (nsamples, nlines, nbands) ELSE $   ;input data type is floating point
+if (data_type eq 1) then rfl = bytarr (nsamples, nlines, nbands) ELSE $   ;input data type is byte
+if (data_type eq 12) then rfl = uintarr (nsamples, nlines, nbands) ELSE $ ;input data type is unsigned integer
+if (data_type eq 2) then rfl = intarr (nsamples, nlines, nbands) ELSE print, 'check input file data type' ;input data type is integer
+
+openr, lun, infile, /get_lun
+readu, lun, rfl
+close, lun
+rfl = FLOAT(rfl)  
+
 ;calculate the indexes
 indx = fltarr(nsamples, nlines, 15)   ;currently calculating 15 indices
   
@@ -106,7 +79,7 @@ for i = 0, nsamples-1 do begin
   indx(i,j,2) = (rfl(i,j,nir) / rfl(i,j,grn)) - 1.0
 
   ;4. Red-edge CI
-  indx(i,j,3) = (rfl(i,j,fred) / rfl(i,j,redge)) - 1.0
+  indx(i,j,3) = (rfl(i,j,fred) / rfl(i,j,redge)) - 1.0  ;very similar to Zarco-Tejada Miller index R750/R710
 
   ;5. MCARI
   indx(i,j,4) = (rfl(i,j,redge)-rfl(i,j,red) - 0.2*(rfl(i,j,redge) - rfl(i,j,blu))) * (rfl(i,j,redge) / rfl(i,j,red))
