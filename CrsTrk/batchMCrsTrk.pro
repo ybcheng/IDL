@@ -4,7 +4,7 @@
 
 pro batchMCrsTrk, imagedirectory, imagesuffix, outdirectory, outsuffix, outtifsuffix
 
-;batchMCrsTrk, 'C:\Users\Yen-Ben\Documents\IDL\CrsTrk\', 'TIF', 'C:\Users\Yen-Ben\Documents\IDL\CrsTrk\1\', '_crsTrk1', '_crsTrk1'
+;batchMCrsTrk, 'C:\Users\Yen-Ben\Documents\IDL\CrsTrk\', 'TIF', 'C:\Users\Yen-Ben\Documents\IDL\CrsTrk\1\', '_crsTrk1.img', '_crsTrk1'
 
 ;batch process cross-track illumination correction on multiple files
 
