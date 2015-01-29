@@ -1,13 +1,12 @@
 ;Chlorophyll index calculator
 ;Yen-Ben Cheng
-;August 2014
+;January 2015
 
 pro ChlIndx, infile, blu, grn, red, redge, fred, nir, outfile
 
-;ChlIndx, 'C:\Users\Yen-Ben\Documents\IDL\VegIndx\input', 1,0,4,2,3,5, 'C:\Users\Yen-Ben\Documents\IDL\VegIndx\output'
+;ChlIndx, 'C:\Users\Yen-Ben\IDLWorkspace84\input', 1,0,4,2,3,5, 'C:\Users\Yen-Ben\IDLWorkspace84\output'
 
 ;this program is designed to calculate a bunch of indexes for chlorophyll produdct development
-;input file needs to be in BSQ format
 ;band order needs to be provided in the command line
 
 ;!!! REMEMBER band number starts at 0 !!!
