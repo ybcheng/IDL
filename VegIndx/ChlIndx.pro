@@ -33,66 +33,52 @@ if (nbands NE 6) then begin           ;input file needs to have exactly six band
   return
 endif
 
-;print, nsamples,'    x',nlines,'    x',nbands
+print, nsamples,'    x',nlines,'    x',nbands
 
-CASE interleave OF
-  0: BEGIN  ;input file is in BSQ format
-    PRINT, 'input file is in BSQ format:',nsamples,',',nlines,',',nbands
-    CASE data_type OF
-      1: rfl = BYTARR  (nsamples, nlines, nbands) ;input data type is byte
-      2: rfl = INTARR  (nsamples, nlines, nbands) ;input data type is integer
-      4: rfl = FLTARR  (nsamples, nlines, nbands) ;input data type is floating point
-      12: rfl = UINTARR(nsamples, nlines, nbands) ;input data type is unsigned integer
-      ELSE: BEGIN
-        ENVI_REPORT_ERROR, 'check input file data type', /cancel
-        RETURN
-      END
-    ENDCASE
-    openr, lun, infile, /get_lun
-    readu, lun, rfl
-    close, lun
-    rfl = FLOAT(rfl)
-  END
-  1: BEGIN  ;input file is in BIL format
-    PRINT, 'input file is in BIL format:',nsamples,',',nbands,',',nlines
-    CASE data_type OF
-      1: rfl = BYTARR  (nsamples, nbands, nlines) ;input data type is byte
-      2: rfl = INTARR  (nsamples, nbands, nlines) ;input data type is integer
-      4: rfl = FLTARR  (nsamples, nbands, nlines) ;input data type is floating point
-      12: rfl = UINTARR(nsamples, nbands, nlines) ;input data type is unsigned integer
-      ELSE: BEGIN
-        ENVI_REPORT_ERROR, 'check input file data type', /cancel
-        RETURN
-      END
-    ENDCASE
-    openr, lun, infile, /get_lun
-    readu, lun, rfl
-    close, lun
-    rfl = FLOAT(rfl)
-    rfl = TRANSPOSE(rfl, [0,2,1])
-  END
-  2: BEGIN  ;input file is in BIP format
-    PRINT, 'input file is in BIP format:',nbands,',',nsamples,',',nlines
-    CASE data_type OF
-      1: rfl = bytarr  (nbands, nsamples, nlines) ;input data type is byte
-      2: rfl = intarr  (nbands, nsamples, nlines) ;input data type is integer
-      4: rfl = fltarr  (nbands, nsamples, nlines) ;input data type is floating point
-      12: rfl = uintarr(nbands, nsamples, nlines) ;input data type is unsigned integer
-      ELSE: BEGIN
-        ENVI_REPORT_ERROR, 'check input file data type', /cancel
-        RETURN
-      END
-    ENDCASE
-    openr, lun, infile, /get_lun
-    readu, lun, rfl
-    close, lun
-    rfl = FLOAT(rfl)
-    rfl = TRANSPOSE(rfl, [1,2,0])
-  END
-ENDCASE
+if (interleave NE 0) then begin       ;input file needs to be in BSQ format
+  print, 'input file needs to be in BSQ format'
+  return
+endif
 
+if (data_type eq 4) then begin        ;input data type is floating point
+  print, 'input data type is floating point'
+  rfl = fltarr (nsamples, nlines, nbands)
+  openr, lun, infile, /get_lun
+  readu, lun, rfl
+  close, lun
+endif else begin
+  if (data_type eq 1) then begin      ;input data type is byte
+    print, 'input data type is byte'
+    rfl = bytarr (nsamples, nlines, nbands)
+    openr, lun, infile, /get_lun
+    readu, lun, rfl
+    close, lun
+    rfl = float(rfl)
+  endif else begin
+    if (data_type eq 12) then begin   ;input data type is unsigned integer
+      print, 'input data type is unsigned integer'
+      rfl = uintarr (nsamples, nlines, nbands)
+      openr, lun, infile, /get_lun
+      readu, lun, rfl
+      close, lun
+      rfl = float(rfl)
+    endif else begin
+      if (data_type eq 2) then begin   ;input data type is integer
+        print, 'input data type is integer'
+        rfl = intarr (nsamples, nlines, nbands)
+        openr, lun, infile, /get_lun
+        readu, lun, rfl
+        close, lun
+        rfl = float(rfl)
+      endif else begin
+        print, 'check input file data type'
+      endelse
+    endelse    
+  endelse
+endelse
+  
 ;calculate the indexes
-indx = FLTARR(nsamples, nlines, 15)   ;currently calculating 15 indices
+indx = fltarr(nsamples, nlines, 15)   ;currently calculating 15 indices
   
 for i = 0, nsamples-1 do begin
   for j = 0, nlines-1 do begin
@@ -120,7 +106,7 @@ for i = 0, nsamples-1 do begin
   indx(i,j,2) = (rfl(i,j,nir) / rfl(i,j,grn)) - 1.0
 
   ;4. Red-edge CI
-  indx(i,j,3) = (rfl(i,j,fred) / rfl(i,j,redge)) - 1.0
+  indx(i,j,3) = (rfl(i,j,fred) / rfl(i,j,redge)) - 1.1
 
   ;5. MCARI
   indx(i,j,4) = (rfl(i,j,redge)-rfl(i,j,red) - 0.2*(rfl(i,j,redge) - rfl(i,j,blu))) * (rfl(i,j,redge) / rfl(i,j,red))
@@ -144,7 +130,7 @@ for i = 0, nsamples-1 do begin
   indx(i,j,10) = 1.5*(1.2*(rfl(i,j,nir)-rfl(i,j,grn))-2.5*(rfl(i,j,red)-rfl(i,j,grn))) / $
     sqrt((2.0*rfl(i,j,nir)+1)^2.0 - (6.0*rfl(i,j,nir)) + (5.0*sqrt(rfl(i,j,red))) - 0.5)
     
-  ;13. MCARI/MTVI2
+  ;12. MCARI/MTVI2
   indx(i,j,11) = indx(i,j,4) / indx(i,j,10)
   
   ;13. DCNI   !!! we're using 750 nm instead of 720 nm !!!
@@ -156,9 +142,6 @@ for i = 0, nsamples-1 do begin
   ;15. GCI/NDVI
   indx(i,j,14) = indx(i,j,2) / indx(i,j,0)
   
-  ;16. TVI
-  ;indx(i,j,15) = 0.5*(120*(rfl(i,j,fred)-rfl(i,j,grn))-200*(rfl(i,j,red)-rfl(i,j,grn)))
-     
   endfor
   print, float(i)/float(nsamples)
 endfor
