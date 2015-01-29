@@ -4,7 +4,7 @@
 
 pro batchCut, imagedirectory, imagesuffix, subimg, outdirectory, outsuffix, outtifsuffix
 
-  ;batchCut, 'C:\Users\Yen-Ben\Documents\IDL\cut\', 'TIF', [100,100, 1180, 924], 'C:\Users\Yen-Ben\Documents\IDL\cut\1\', '_cut', ''
+  ;batchCut, 'C:\Users\Yen-Ben\Documents\IDL\cut\', 'TIF', [100,100, 1180, 924], 'C:\Users\Yen-Ben\Documents\IDL\cut\1\', '_cut.img', ''
 
   ;batch spatially subsetting on multiple files
 
