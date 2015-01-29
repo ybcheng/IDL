@@ -106,7 +106,7 @@ for i = 0, nsamples-1 do begin
   indx(i,j,2) = (rfl(i,j,nir) / rfl(i,j,grn)) - 1.0
 
   ;4. Red-edge CI
-  indx(i,j,3) = (rfl(i,j,fred) / rfl(i,j,redge)) - 1.1
+  indx(i,j,3) = (rfl(i,j,fred) / rfl(i,j,redge)) - 1.0
 
   ;5. MCARI
   indx(i,j,4) = (rfl(i,j,redge)-rfl(i,j,red) - 0.2*(rfl(i,j,redge) - rfl(i,j,blu))) * (rfl(i,j,redge) / rfl(i,j,red))
