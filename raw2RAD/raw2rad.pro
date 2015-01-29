@@ -3,7 +3,7 @@
 ;October 2014
 
 pro raw2rad, infile, scale, intTime, gain, offset, outfile
-;raw2rad, 'C:\Users\Yen-Ben\Documents\IDL\raw2rad\input', 4.0, [1.0,1.0,1.5,1.5,1.0,1.9], [0.00022461,0.00031737,0.00026080,0.00026177,0.00027219,0.00031736], [0.0,0.0,0.0,0.0,0.0,0.0],'C:\Users\Yen-Ben\Documents\IDL\raw2rad\output'
+;raw2rad, 'C:\Users\Yen-Ben\Documents\IDL\raw2rad\input.img', 4.0, [1.0,1.0,1.5,1.5,1.0,1.9], [0.00022461,0.00031737,0.00026080,0.00026177,0.00027219,0.00031736], [0.0,0.0,0.0,0.0,0.0,0.0],'C:\Users\Yen-Ben\Documents\IDL\raw2rad\output.img'
 
 ;this program is designed to apply gain and offset coefficients to transfer raw DN to radiance readings
 ;check the wavelength of each of the bands and make sure all the coefficients are in the right order
