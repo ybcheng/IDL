@@ -3,7 +3,7 @@
 ;October 2014
 
 pro empLn, infile, fieldB, fieldD, imgB, imgD, outfile
-;empLn,'C:\Users\Yen-Ben\Documents\IDL\empLn\input',[0.4821,0.4891,0.4736,0.4719,0.4752,0.4713],[0.0712,0.0761,0.0643,0.0629,0.0654,0.0620],[204,145,203,223,151,206],[53,34,59,91,41,82],'C:\Users\Yen-Ben\Documents\IDL\empLn\output'
+;empLn,'C:\Users\Yen-Ben\Documents\IDL\empLn\input.img',[0.4821,0.4891,0.4736,0.4719,0.4752,0.4713],[0.0712,0.0761,0.0643,0.0629,0.0654,0.0620],[204,145,203,223,151,206],[53,34,59,91,41,82],'C:\Users\Yen-Ben\Documents\IDL\empLn\output.img'
 
 ;this program is designed to manually apply empirical line atmospheric correction to
 ;derive reflectance from raw or radiance values from airborne imagery
