@@ -14,7 +14,7 @@ pro raw2rad, infile, scale, intTime, gain, offset, outfile
 ;
 ;intTime is integration time (ms), a floating point array, make sure the numbers are in the correct order
 ;rad = ((DN*scale)/intTime)*gain + offset
-;input file needs to be in BSQ format
+
 
 e=ENVI(/headless)
 
@@ -30,50 +30,63 @@ if (nbands NE 6) then begin               ;input file needs to have exactly six 
   return
 endif
 
-if (interleave NE 0) then begin        ;input file needs to be in BSQ format
-  ;print, 'input file needs to be in BSQ format'
-  envi_report_error, 'Incorrect interleave type! Please convert the source image to BSQ format.', /cancel
-  return
-endif
-
-if (data_type eq 4) then begin        ;input data type is floating point
-  print, 'input data type is floating point'
-  raw = fltarr (nsamples, nlines, nbands)
-  openr, lun, infile, /get_lun
-  readu, lun, raw
-  close, lun
-endif else begin
-  if (data_type eq 1) then begin      ;input data type is byte
-    print, 'input data type is byte'
-    raw = bytarr (nsamples, nlines, nbands)
+CASE interleave OF
+  0: BEGIN  
+    PRINT, 'input file is in BSQ format:',nsamples,',',nlines,',',nbands
+    CASE data_type OF
+      1: raw = BYTARR  (nsamples, nlines, nbands) ;input data type is byte
+      2: raw = INTARR  (nsamples, nlines, nbands) ;input data type is integer
+      4: raw = FLTARR  (nsamples, nlines, nbands) ;input data type is floating point
+      12: raw = UINTARR(nsamples, nlines, nbands) ;input data type is unsigned integer
+      ELSE: BEGIN
+        ENVI_REPORT_ERROR, 'check input file data type', /cancel
+        RETURN
+      END
+    ENDCASE
     openr, lun, infile, /get_lun
     readu, lun, raw
     close, lun
-    raw = float(raw)
-  endif else begin
-    if (data_type eq 12) then begin   ;input data type is unsigned integer
-      print, 'input data type is unsigned integer'
-      raw = uintarr (nsamples, nlines, nbands)
-      openr, lun, infile, /get_lun
-      readu, lun, raw
-      close, lun
-      raw = float(raw)
-    endif else begin
-      if (data_type eq 2) then begin   ;input data type is integer
-        print, 'input data type is integer'
-        raw = intarr (nsamples, nlines, nbands)
-        openr, lun, infile, /get_lun
-        readu, lun, raw
-        close, lun
-        raw = float(raw)
-      endif else begin
-        print, 'check input file data type'
-      endelse
-    endelse
-  endelse
-endelse
+    raw = FLOAT(raw)
+  END
+  1: BEGIN  
+    PRINT, 'input file is in BIL format:',nsamples,',',nbands,',',nlines
+    CASE data_type OF
+      1: raw = BYTARR  (nsamples, nbands, nlines) ;input data type is byte
+      2: raw = INTARR  (nsamples, nbands, nlines) ;input data type is integer
+      4: raw = FLTARR  (nsamples, nbands, nlines) ;input data type is floating point
+      12: raw = UINTARR(nsamples, nbands, nlines) ;input data type is unsigned integer
+      ELSE: BEGIN
+        ENVI_REPORT_ERROR, 'check input file data type', /cancel
+        RETURN
+      END
+    ENDCASE
+    openr, lun, infile, /get_lun
+    readu, lun, raw
+    close, lun
+    raw = FLOAT(raw)
+    raw = TRANSPOSE(raw, [0,2,1])
+  END
+  2: BEGIN  
+    PRINT, 'input file is in BIP format:',nbands,',',nsamples,',',nlines
+    CASE data_type OF
+      1: raw = bytarr  (nbands, nsamples, nlines) ;input data type is byte
+      2: raw = intarr  (nbands, nsamples, nlines) ;input data type is integer
+      4: raw = fltarr  (nbands, nsamples, nlines) ;input data type is floating point
+      12: raw = uintarr(nbands, nsamples, nlines) ;input data type is unsigned integer
+      ELSE: BEGIN
+        ENVI_REPORT_ERROR, 'check input file data type', /cancel
+        RETURN
+      END
+    ENDCASE
+    OPENR, lun, infile, /get_lun
+    READU, lun, raw
+    CLOSE, lun
+    raw = FLOAT(raw)
+    raw = TRANSPOSE(raw, [1,2,0])
+  END
+ENDCASE
 
-rad = fltarr (nsamples, nlines, nbands)
+rad = FLTARR (nsamples, nlines, nbands)
 
 ;apply the gain and offset to DN
 for i = 0, nsamples-1 do begin
@@ -82,11 +95,11 @@ for i = 0, nsamples-1 do begin
       rad(i,j,k) = (raw(i,j,k)*scale/intTime(k))*gain(k) + offset(k)
     endfor
   endfor
-  print, float(i)/float(nsamples)
+  PRINT, FLOAT(i)/FLOAT(nsamples)
 endfor
 
-openw, lun, outfile
-writeu, lun, rad
-close, lun
+OPENW, lun, outfile
+WRITEU, lun, rad
+CLOSE, lun
 
 end

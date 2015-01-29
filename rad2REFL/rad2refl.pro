@@ -11,8 +11,7 @@ pro rad2refl, infile, scale, irrad, outfile
 ;irradiance values are simulated with SMARTS, in W/m2/nm
 ;if radiance values are not in W/m2/sr/nm, use the scale variable to correct it
 ;refltance are calculated as rad/(irrad/pi)
-;
-;input file needs to be in BSQ format
+
   
 e=ENVI(/headless)
 
@@ -28,62 +27,76 @@ if (nbands NE 6) then begin               ;input file needs to have exactly six 
   return
 endif
 
-if (interleave NE 0) then begin           ;input file needs to be in BSQ format
-  print, 'input file needs to be in BSQ format'
-  return
-endif
-
-if (data_type eq 4) then begin            ;input data type is floating point
-  print, 'input data type is floating point'
-  rad = fltarr (nsamples, nlines, nbands)
-  openr, lun, infile, /get_lun
-  readu, lun, rad
-  close, lun
-endif else begin
-  if (data_type eq 1) then begin          ;input data type is byte
-    print, 'input data type is byte'
-    rad = bytarr (nsamples, nlines, nbands)
+CASE interleave OF
+  0: BEGIN
+    PRINT, 'input file is in BSQ format:',nsamples,',',nlines,',',nbands
+    CASE data_type OF
+      1: rad = BYTARR  (nsamples, nlines, nbands) ;input data type is byte
+      2: rad = INTARR  (nsamples, nlines, nbands) ;input data type is integer
+      4: rad = FLTARR  (nsamples, nlines, nbands) ;input data type is floating point
+      12: rad = UINTARR(nsamples, nlines, nbands) ;input data type is unsigned integer
+      ELSE: BEGIN
+        ENVI_REPORT_ERROR, 'check input file data type', /cancel
+        RETURN
+      END
+    ENDCASE
     openr, lun, infile, /get_lun
     readu, lun, rad
     close, lun
-    rad = float(rad)
-  endif else begin
-    if (data_type eq 12) then begin       ;input data type is unsigned integer
-      print, 'input data type is unsigned integer'
-      rad = uintarr (nsamples, nlines, nbands)
-      openr, lun, infile, /get_lun
-      readu, lun, rad
-      close, lun
-      rad = float(rad)
-    endif else begin
-      if (data_type eq 2) then begin      ;input data type is integer
-        print, 'input data type is integer'
-        rad = intarr (nsamples, nlines, nbands)
-        openr, lun, infile, /get_lun
-        readu, lun, rad
-        close, lun
-        rad = float(rad)
-      endif else begin
-        print, 'check input file data type'
-      endelse
-    endelse
-  endelse
-endelse
+    rad = FLOAT(rad)
+  END
+  1: BEGIN
+    PRINT, 'input file is in BIL format:',nsamples,',',nbands,',',nlines
+    CASE data_type OF
+      1: rad = BYTARR  (nsamples, nbands, nlines) ;input data type is byte
+      2: rad = INTARR  (nsamples, nbands, nlines) ;input data type is integer
+      4: rad = FLTARR  (nsamples, nbands, nlines) ;input data type is floating point
+      12: rad = UINTARR(nsamples, nbands, nlines) ;input data type is unsigned integer
+      ELSE: BEGIN
+        ENVI_REPORT_ERROR, 'check input file data type', /cancel
+        RETURN
+      END
+    ENDCASE
+    OPENR, lun, infile, /get_lun
+    READU, lun, rad
+    CLOSE, lun
+    rad = FLOAT(rad)
+    rad = TRANSPOSE(rad, [0,2,1])
+  END
+  2: BEGIN
+    PRINT, 'input file is in BIP format:',nbands,',',nsamples,',',nlines
+    CASE data_type OF
+      1: rad = BYTARR  (nbands, nsamples, nlines) ;input data type is byte
+      2: rad = INTARR  (nbands, nsamples, nlines) ;input data type is integer
+      4: rad = FLTARR  (nbands, nsamples, nlines) ;input data type is floating point
+      12: rad = UINTARR(nbands, nsamples, nlines) ;input data type is unsigned integer
+      ELSE: BEGIN
+        ENVI_REPORT_ERROR, 'check input file data type', /cancel
+        RETURN
+      END
+    ENDCASE
+    OPENR, lun, infile, /get_lun
+    READU, lun, rad
+    CLOSE, lun
+    rad = FLOAT(rad)
+    rad = TRANSPOSE(rad, [1,2,0])
+  END
+ENDCASE
 
 refl = fltarr (nsamples, nlines, nbands)
 
 ;apply the scale and calculate reflectance using simulated irradiance
-for i = 0, nsamples-1 do begin
-  for j = 0, nlines-1 do begin
-    for k = 0, nbands-1 do begin
+FOR i = 0, nsamples-1 DO BEGIN
+  FOR j = 0, nlines-1 DO BEGIN
+    FOR k = 0, nbands-1 DO BEGIN
       refl(i,j,k) = (rad(i,j,k)*scale) / (irrad(k) / !pi)
-    endfor
-  endfor
-  print, float(i)/float(nsamples)
-endfor
+    ENDFOR
+  ENDFOR
+  PRINT, FLOAT(i)/FLOAT(nsamples)
+ENDFOR
 
-openw, lun, outfile
-writeu, lun, refl
-close, lun
+OPENW, lun, outfile
+WRITEU, lun, refl
+CLOSE, lun
 
 end
