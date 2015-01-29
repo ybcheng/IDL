@@ -3,7 +3,7 @@
 ;october 2014
 
 pro rad2refl, infile, scale, irrad, outfile
-;rad2refl, 'C:\Users\Yen-Ben\Documents\IDL\rad2refl\input', 1, [1.19,1.10,0.93,0.86,0.84,0.73],'C:\Users\Yen-Ben\Documents\IDL\rad2refl\output'
+;rad2refl, 'C:\Users\Yen-Ben\Documents\IDL\rad2refl\input.img', 1, [1.19,1.10,0.93,0.86,0.84,0.73],'C:\Users\Yen-Ben\Documents\IDL\rad2refl\output.img'
 
 ;this program is designed to calculate reflectance from images that's already transfered to radiance
 ;check the wavelength of each of the band and make sure the irrad is in the right order
