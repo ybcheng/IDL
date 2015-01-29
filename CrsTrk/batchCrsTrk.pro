@@ -4,8 +4,8 @@
 
 pro batchCrsTrk, imagedirectory, imagesuffix, range_dir, method, order, pos, outdirectory, outsuffix, outtifsuffix
 
-;batchCrsTrk, 'C:\Users\Yen-Ben\Documents\IDL\CrsTrk\', 'TIF', 0, 1, 2, [0,1,2,3,4,5], 'C:\Users\Yen-Ben\Documents\IDL\CrsTrk\1\', '_crsTrk1', '_crsTrk1'
-;batchCrsTrk, 'C:\Users\Yen-Ben\Documents\IDL\CrsTrk\1\TIF\', 'TIF', 1, 1, 2, [0,1,2,3,4,5], 'C:\Users\Yen-Ben\Documents\IDL\CrsTrk\2\', '_crsTrk2', '_crsTrk2'
+;batchCrsTrk, 'C:\Users\Yen-Ben\Documents\IDL\CrsTrk\', 'TIF', 0, 1, 2, [0,1,2,3,4,5], 'C:\Users\Yen-Ben\Documents\IDL\CrsTrk\1\', '_crsTrk1.img', '_crsTrk1'
+;batchCrsTrk, 'C:\Users\Yen-Ben\Documents\IDL\CrsTrk\1\TIF\', 'TIF', 1, 1, 2, [0,1,2,3,4,5], 'C:\Users\Yen-Ben\Documents\IDL\CrsTrk\2\', '_crsTrk2.img', '_crsTrk2'
 
 ;batch process cross-track illumination correction on multiple files
 
