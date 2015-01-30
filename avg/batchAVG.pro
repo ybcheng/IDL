@@ -2,7 +2,7 @@
 ;Yen-Ben Cheng
 ;January 2015
 
-pro batchAVG, imagedirectory, imagesuffix, ncolumns, nrows, nbands, outcsvfile
+pro batchAVG, imagedirectory, imagesuffix, ncolumns, nrows, nbands, outfile
 
   ;batchAVG, 'C:\Users\Yen-Ben\Documents\IDL\avg\', 'bin', 1024, 768, 1, 'C:\Users\Yen-Ben\Documents\IDL\avg\avg.csv'
   ;
@@ -30,6 +30,7 @@ pro batchAVG, imagedirectory, imagesuffix, ncolumns, nrows, nbands, outcsvfile
     openr, lun, imagenamearray(i), /get_lun
     readu, lun, img
     close, lun
+    FREE_LUN, lun
     
     img = FLOAT(img)
     imgavgarr(i) = mean(img)
@@ -38,5 +39,6 @@ pro batchAVG, imagedirectory, imagesuffix, ncolumns, nrows, nbands, outcsvfile
   
   endfor
 
-write_csv, outcsvfile, imgavgarr
+write_csv, outfile, imgavgarr
+
 end
