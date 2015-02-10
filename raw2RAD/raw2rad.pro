@@ -22,7 +22,7 @@ e=ENVI(/headless)
 envi_open_file, infile, r_fid=fid
 if (fid eq -1) then return
 
-envi_file_query, fid, ns=nsamples, nl=nlines, nb=nbands, interleave=interleave, data_type=data_type
+envi_file_query, fid, ns=nsamples, nl=nlines, nb=nbands, interleave=interleave, data_type=data_type, dims=dims
 envi_file_mng, id=fid, /remove
 
 if (nbands NE 6) then begin               ;input file needs to have exactly six bands
@@ -30,61 +30,15 @@ if (nbands NE 6) then begin               ;input file needs to have exactly six 
   return
 endif
 
-CASE interleave OF
-  0: BEGIN  
-    PRINT, 'input file is in BSQ format:',nsamples,',',nlines,',',nbands
-    CASE data_type OF
-      1: raw = BYTARR  (nsamples, nlines, nbands) ;input data type is byte
-      2: raw = INTARR  (nsamples, nlines, nbands) ;input data type is integer
-      4: raw = FLTARR  (nsamples, nlines, nbands) ;input data type is floating point
-      12: raw = UINTARR(nsamples, nlines, nbands) ;input data type is unsigned integer
-      ELSE: BEGIN
-        ENVI_REPORT_ERROR, 'check input file data type', /cancel
-        RETURN
-      END
-    ENDCASE
-    openr, lun, infile, /get_lun
-    readu, lun, raw
-    close, lun
-    raw = FLOAT(raw)
-  END
-  1: BEGIN  
-    PRINT, 'input file is in BIL format:',nsamples,',',nbands,',',nlines
-    CASE data_type OF
-      1: raw = BYTARR  (nsamples, nbands, nlines) ;input data type is byte
-      2: raw = INTARR  (nsamples, nbands, nlines) ;input data type is integer
-      4: raw = FLTARR  (nsamples, nbands, nlines) ;input data type is floating point
-      12: raw = UINTARR(nsamples, nbands, nlines) ;input data type is unsigned integer
-      ELSE: BEGIN
-        ENVI_REPORT_ERROR, 'check input file data type', /cancel
-        RETURN
-      END
-    ENDCASE
-    openr, lun, infile, /get_lun
-    readu, lun, raw
-    close, lun
-    raw = FLOAT(raw)
-    raw = TRANSPOSE(raw, [0,2,1])
-  END
-  2: BEGIN  
-    PRINT, 'input file is in BIP format:',nbands,',',nsamples,',',nlines
-    CASE data_type OF
-      1: raw = bytarr  (nbands, nsamples, nlines) ;input data type is byte
-      2: raw = intarr  (nbands, nsamples, nlines) ;input data type is integer
-      4: raw = fltarr  (nbands, nsamples, nlines) ;input data type is floating point
-      12: raw = uintarr(nbands, nsamples, nlines) ;input data type is unsigned integer
-      ELSE: BEGIN
-        ENVI_REPORT_ERROR, 'check input file data type', /cancel
-        RETURN
-      END
-    ENDCASE
-    OPENR, lun, infile, /get_lun
-    READU, lun, raw
-    CLOSE, lun
-    raw = FLOAT(raw)
-    raw = TRANSPOSE(raw, [1,2,0])
-  END
-ENDCASE
+raw = FLTARR(nsamples, nlines, nbands)
+
+for i = 0, nbands-1 do begin
+  raw[*,*,i] = envi_get_data(fid=fid, dims=dims, pos=i)
+endfor
+
+raw = FLOAT(raw)
+
+envi_file_mng, id=fid, /remove
 
 rad = FLTARR (nsamples, nlines, nbands)
 
@@ -98,7 +52,7 @@ for i = 0, nsamples-1 do begin
   PRINT, FLOAT(i)/FLOAT(nsamples)
 endfor
 
-OPENW, lun, outfile
+OPENW, lun, outfile, /GET_LUN
 WRITEU, lun, rad
 CLOSE, lun
 
