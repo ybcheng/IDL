@@ -4,7 +4,7 @@
 
 pro ChlIndx, infile, blu, grn, red, redge, fred, nir, outfile
 
-;ChlIndx, 'C:\Users\Yen-Ben\IDLWorkspace84\input.img', 1,0,4,2,3,5, 'C:\Users\Yen-Ben\IDLWorkspace84\output.img'
+;ChlIndx2, 'C:\Users\Yen-Ben\Documents\IDL\VegIndx\input.img', 1,0,4,2,3,5, 'C:\Users\Yen-Ben\Documents\IDL\VegIndx\output.img'
 
 ;this program is designed to calculate a bunch of indexes for chlorophyll produdct development
 ;band order needs to be provided in the command line
@@ -24,71 +24,23 @@ e=ENVI(/headless)
 envi_open_file, infile, r_fid=fid
 if (fid eq -1) then return
 
-envi_file_query, fid, ns=nsamples, nl=nlines, nb=nbands, interleave=interleave, data_type=data_type 
-envi_file_mng, id=fid, /remove
+envi_file_query, fid, ns=nsamples, nl=nlines, nb=nbands, interleave=interleave, data_type=data_type, dims=dims 
+;dims=[-1L, 0, nsamples-1, 0, nlines-1]  
+;print, nsamples,'    x',nlines,'    x',nbands
 
 if (nbands NE 6) then begin           ;input file needs to have exactly six bands
   envi_report_error, 'Incorrect number of bands!', /cancel
   return
 endif
 
-;print, nsamples,'    x',nlines,'    x',nbands
+rfl = FLTARR(nsamples, nlines, nbands)
 
-CASE interleave OF
-  0: BEGIN  ;input file is in BSQ format
-    PRINT, 'input file is in BSQ format:',nsamples,',',nlines,',',nbands
-    CASE data_type OF
-      1: rfl = BYTARR  (nsamples, nlines, nbands) ;input data type is byte
-      2: rfl = INTARR  (nsamples, nlines, nbands) ;input data type is integer
-      4: rfl = FLTARR  (nsamples, nlines, nbands) ;input data type is floating point
-      12: rfl = UINTARR(nsamples, nlines, nbands) ;input data type is unsigned integer
-      ELSE: BEGIN
-        ENVI_REPORT_ERROR, 'check input file data type', /cancel
-        RETURN
-      END
-    ENDCASE
-    openr, lun, infile, /get_lun
-    readu, lun, rfl
-    close, lun
-    rfl = FLOAT(rfl)
-  END
-  1: BEGIN  ;input file is in BIL format
-    PRINT, 'input file is in BIL format:',nsamples,',',nbands,',',nlines
-    CASE data_type OF
-      1: rfl = BYTARR  (nsamples, nbands, nlines) ;input data type is byte
-      2: rfl = INTARR  (nsamples, nbands, nlines) ;input data type is integer
-      4: rfl = FLTARR  (nsamples, nbands, nlines) ;input data type is floating point
-      12: rfl = UINTARR(nsamples, nbands, nlines) ;input data type is unsigned integer
-      ELSE: BEGIN
-        ENVI_REPORT_ERROR, 'check input file data type', /cancel
-        RETURN
-      END
-    ENDCASE
-    openr, lun, infile, /get_lun
-    readu, lun, rfl
-    close, lun
-    rfl = FLOAT(rfl)
-    rfl = TRANSPOSE(rfl, [0,2,1])
-  END
-  2: BEGIN  ;input file is in BIP format
-    PRINT, 'input file is in BIP format:',nbands,',',nsamples,',',nlines
-    CASE data_type OF
-      1: rfl = bytarr  (nbands, nsamples, nlines) ;input data type is byte
-      2: rfl = intarr  (nbands, nsamples, nlines) ;input data type is integer
-      4: rfl = fltarr  (nbands, nsamples, nlines) ;input data type is floating point
-      12: rfl = uintarr(nbands, nsamples, nlines) ;input data type is unsigned integer
-      ELSE: BEGIN
-        ENVI_REPORT_ERROR, 'check input file data type', /cancel
-        RETURN
-      END
-    ENDCASE
-    openr, lun, infile, /get_lun
-    readu, lun, rfl
-    close, lun
-    rfl = FLOAT(rfl)
-    rfl = TRANSPOSE(rfl, [1,2,0])
-  END
-ENDCASE
+for i = 0, nbands-1 do begin
+  rfl[*,*,i] = envi_get_data(fid=fid, dims=dims, pos=i)
+endfor
+
+rfl = FLOAT(rfl)
+envi_file_mng, id=fid, /remove
 
 ;calculate the indexes
 indx = FLTARR(nsamples, nlines, 15)   ;currently calculating 15 indices
@@ -162,7 +114,7 @@ for i = 0, nsamples-1 do begin
   print, float(i)/float(nsamples)
 endfor
   
-openw, lun, outfile
+openw, lun, outfile, /GET_LUN
 writeu, lun, indx
 close, lun
   
