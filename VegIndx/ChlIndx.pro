@@ -39,7 +39,6 @@ for i = 0, nbands-1 do begin
   rfl[*,*,i] = envi_get_data(fid=fid, dims=dims, pos=i)
 endfor
 
-rfl = FLOAT(rfl)
 envi_file_mng, id=fid, /remove
 
 ;calculate the indexes

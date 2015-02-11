@@ -23,7 +23,6 @@ envi_open_file, infile, r_fid=fid
 if (fid eq -1) then return
 
 envi_file_query, fid, ns=nsamples, nl=nlines, nb=nbands, interleave=interleave, data_type=data_type, dims=dims
-envi_file_mng, id=fid, /remove
 
 if (nbands NE 6) then begin               ;input file needs to have exactly six bands
   envi_report_error, 'Incorrect number of bands!', /cancel
@@ -35,8 +34,6 @@ raw = FLTARR(nsamples, nlines, nbands)
 for i = 0, nbands-1 do begin
   raw[*,*,i] = envi_get_data(fid=fid, dims=dims, pos=i)
 endfor
-
-raw = FLOAT(raw)
 
 envi_file_mng, id=fid, /remove
 

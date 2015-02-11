@@ -56,8 +56,8 @@ for j=0, numimages-1 do begin
   envi_open_file, imagenamearray[j], r_fid=fid
   if (fid eq -1) then return  
   
-  envi_file_query, fid, ns=nsamples, nl=nlines, nb=nbands, interleave=interleave, data_type=data_type 
-  dims=[-1L, 0, nsamples-1, 0, nlines-1]  ;this one's for cross_track_correction_doit
+  envi_file_query, fid, ns=nsamples, nl=nlines, nb=nbands, interleave=interleave, data_type=data_type, dims=dims 
+  ;dims=[-1L, 0, nsamples-1, 0, nlines-1]  ;this one's for cross_track_correction_doit
   
   ;these two are for write_tiff
   temparr = uintarr(nsamples, nlines, nbands)
