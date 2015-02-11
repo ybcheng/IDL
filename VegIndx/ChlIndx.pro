@@ -4,7 +4,7 @@
 
 pro ChlIndx, infile, blu, grn, red, redge, fred, nir, outfile
 
-;ChlIndx, 'C:\Users\Yen-Ben\Documents\IDL\VegIndx\input.img', 1,0,4,2,3,5, 'C:\Users\Yen-Ben\Documents\IDL\VegIndx\output.img'
+ChlIndx, 'C:\Users\Yen-Ben\Documents\IDL\VegIndx\input.img', 1,0,4,2,3,5, 'C:\Users\Yen-Ben\Documents\IDL\VegIndx\output.img'
 
 ;this program is designed to calculate a bunch of indexes for chlorophyll produdct development
 ;band order needs to be provided in the command line
