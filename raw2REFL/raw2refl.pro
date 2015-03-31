@@ -3,7 +3,7 @@
 ;November 2014
 
 pro raw2refl, infile, DNscale, intTime, gain, offset, radoutfile, RADscale, irrad, refloutfile
-;raw2refl, 'C:\Users\Yen-Ben\Documents\IDL\raw2refl\input.img', 4.0, [1.0,1.0,1.5,1.5,1.0,1.9], [0.00022461,0.00031737,0.00026080,0.00026177,0.00027219,0.00031736], [0.0,0.0,0.0,0.0,0.0,0.0], 'C:\Users\Yen-Ben\Documents\IDL\raw2refl\radoutput.img', 1.0, [1.19,1.10,0.93,0.86,0.84,0.73], 'C:\Users\Yen-Ben\Documents\IDL\raw2refl\refloutput.img'
+;raw2refl, 'C:\Users\Yen-Ben\Documents\IDL\raw2refl\input.img', 4.0, [1.0,1.0,1.5,1.5,1.0,1.9], [0.00022461,0.00031737,0.00026080,0.00026177,0.00027219,0.00031736], [0.0,0.0,0.0,0.0,0.0,0.0], 'C:\Users\Yen-Ben\Documents\IDL\raw2refl\radoutput.img', 1.0, [1.10,1.19,0.86,0.84,0.93,0.72], 'C:\Users\Yen-Ben\Documents\IDL\raw2refl\refloutput.img'
 
 ;this program is designed to apply gain and offset coefficients to transfer raw DN to radiance readings
 ;then calculate reflectance by dividing reflected radiance by irradiance
