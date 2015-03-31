@@ -17,6 +17,8 @@ pro raw2refl, infile, DNscale, intTime, gain, offset, radoutfile, RADscale, irra
 ;rad = ((DN*scale)/intTime)*gain + offset
 ;
 ;irradiance values are simulated with SMARTS, in W/m2/nm
+;check wavelength and make sure the elements are in the right order
+;
 ;if radiance values are not in W/m2/sr/nm, use the RADscale variable to correct it
 ;refltance are calculated as rad/(irrad/pi)
   
