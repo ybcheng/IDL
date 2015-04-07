@@ -9,7 +9,7 @@ pro batchCut, imagedirectory, imagesuffix, subimg, outdirectory, outsuffix, outt
   ;batch spatially subsetting on multiple files
 
   ;this program will output files as ENVI standard files as well as in TIF format
-  ;make to have folders 1, 1\TIF, 2, 2\TIF created where input files are
+  ;make sure to have folders 1, 1\TIF, 2, 2\TIF created where input files are
 
 
   e=ENVI(/headless)
