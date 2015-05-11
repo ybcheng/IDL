@@ -18,7 +18,7 @@ pro ChlIndx, infile, blu, grn, red, redge, fred, nir, outfile
 ;fred  = far-red       750 nm
 ;nir   = near infrared 800 nm
 
-e=ENVI(/headless)
+;e=ENVI(/headless)
 
 ;open and read the input image file
 envi_open_file, infile, r_fid=fid
@@ -42,7 +42,7 @@ endfor
 envi_file_mng, id=fid, /remove
 
 ;calculate the indexes
-indx = FLTARR(nsamples, nlines, 15)   ;currently calculating 15 indices
+indx = FLTARR(nsamples, nlines, 17)   ;currently calculating 15 indices
   
 for i = 0, nsamples-1 do begin
   for j = 0, nlines-1 do begin
@@ -73,10 +73,10 @@ for i = 0, nsamples-1 do begin
   indx(i,j,3) = (rfl(i,j,fred) / rfl(i,j,redge)) - 1.0
 
   ;5. MCARI
-  indx(i,j,4) = (rfl(i,j,redge)-rfl(i,j,red) - 0.2*(rfl(i,j,redge) - rfl(i,j,blu))) * (rfl(i,j,redge) / rfl(i,j,red))
+  indx(i,j,4) = (rfl(i,j,redge)-rfl(i,j,red) - 0.2*(rfl(i,j,redge) - rfl(i,j,grn))) * (rfl(i,j,redge) / rfl(i,j,red))
 
   ;6. TCARI
-  indx(i,j,5) = 3*((rfl(i,j,redge)-rfl(i,j,red)) - 0.2*(rfl(i,j,redge) - rfl(i,j,blu)) * (rfl(i,j,redge) / rfl(i,j,red)))
+  indx(i,j,5) = 3*((rfl(i,j,redge)-rfl(i,j,red)) - 0.2*(rfl(i,j,redge) - rfl(i,j,grn)) * (rfl(i,j,redge) / rfl(i,j,red)))
 
   ;7. OSAVI
   indx(i,j,6) = (1.0+0.16) * (rfl(i,j,nir)-rfl(i,j,red)) / (rfl(i,j,nir)+rfl(i,j,red)+0.16)
@@ -108,6 +108,12 @@ for i = 0, nsamples-1 do begin
   
   ;16. TVI
   ;indx(i,j,15) = 0.5*(120*(rfl(i,j,fred)-rfl(i,j,grn))-200*(rfl(i,j,red)-rfl(i,j,grn)))
+  
+  ;16. GCI2
+  indx(i,j,15) = (rfl(i,j,nir)-rfl(i,j,redge)) / rfl(i,j,grn)
+  
+  ;17. RCI2
+  indx(i,j,16) = (rfl(i,j,fred)-rfl(i,j,grn)) / rfl(i,j,redge)
      
   endfor
   print, float(i)/float(nsamples)
