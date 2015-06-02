@@ -28,7 +28,7 @@ envi_file_query, fid, ns=nsamples, nl=nlines, nb=nbands, interleave=interleave, 
 ;dims=[-1L, 0, nsamples-1, 0, nlines-1]  
 ;print, nsamples,'    x',nlines,'    x',nbands
 
-if (nbands NE 5) then begin           ;input file needs to have exactly six bands
+if (nbands NE 5) then begin           ;input file needs to have exactly five bands for IDS5 system
   envi_report_error, 'Incorrect number of bands!', /cancel
   return
 endif
