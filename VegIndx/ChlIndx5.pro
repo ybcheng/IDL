@@ -4,7 +4,7 @@
 
 pro ChlIndx5, infile, blu, grn, red, redge, nir, outfile
 
-;ChlIndx5, 'C:\Users\Yen-Ben\Documents\IDL\VegIndx\input.img', 1,0,4,2,3, 'C:\Users\Yen-Ben\Documents\IDL\VegIndx\output.img'
+;ChlIndx5, 'D:\IDL\VegIndx\input.img', 4,3,1,2,0, 'D:\IDL\VegIndx\output.img'
 
 ;this program is designed to calculate a bunch of indexes for chlorophyll product development
 ;this is for IDS5 camera system, so it does not have the far-red band@750nm
