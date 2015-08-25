@@ -2,15 +2,15 @@
 ;Yen-Ben Cheng
 ;January 2015
 
-pro ChlIndx, infile, blu, grn, red, redge, fred, nir, outfile
+pro ChlIndx, infile, nindex, blu, grn, red, redge, fred, nir, outfile
 
-;ChlIndx, 'C:\Users\Yen-Ben\Documents\IDL\VegIndx\input.img', 1,0,4,2,3,5, 'C:\Users\Yen-Ben\Documents\IDL\VegIndx\output.img'
-
+;ChlIndx, 'D:\IDL\VegIndx\input.img', 15, 1,0,4,2,3,5, 'D:\IDL\VegIndx\output.img'
 ;this program is designed to calculate a bunch of indexes for chlorophyll produdct development
 ;band order needs to be provided in the command line
 
 ;!!! REMEMBER band number starts at 0 !!!
 
+;nindex: int; number of indices that will be derived
 ;blu   = blue          480 nm
 ;grn   = green         550 nm
 ;red   = red           670 nm
@@ -42,7 +42,7 @@ endfor
 envi_file_mng, id=fid, /remove
 
 ;calculate the indexes
-indx = FLTARR(nsamples, nlines, 17)   ;currently calculating 15 indices
+indx = FLTARR(nsamples, nlines, nindex)   ;currently calculating 15 indices
   
 for i = 0, nsamples-1 do begin
   for j = 0, nlines-1 do begin
@@ -110,10 +110,10 @@ for i = 0, nsamples-1 do begin
   ;indx(i,j,15) = 0.5*(120*(rfl(i,j,fred)-rfl(i,j,grn))-200*(rfl(i,j,red)-rfl(i,j,grn)))
   
   ;16. GCI2
-  indx(i,j,15) = (rfl(i,j,nir)-rfl(i,j,redge)) / rfl(i,j,grn)
+  ;indx(i,j,15) = (rfl(i,j,nir)-rfl(i,j,redge)) / rfl(i,j,grn)
   
   ;17. RCI2
-  indx(i,j,16) = (rfl(i,j,fred)-rfl(i,j,grn)) / rfl(i,j,redge)
+  ;indx(i,j,16) = (rfl(i,j,fred)-rfl(i,j,grn)) / rfl(i,j,redge)
      
   endfor
   print, float(i)/float(nsamples)
